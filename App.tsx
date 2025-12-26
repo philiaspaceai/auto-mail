@@ -37,7 +37,6 @@ const App: React.FC = () => {
         setTemplates(loadedTemplates);
         setBatches(loadedBatches);
         if (loadedSettings) {
-          // Explicitly map settings to handle potential missing fields in older storage
           setSettings({
             clientId: loadedSettings.clientId || '',
             accessToken: loadedSettings.accessToken || '',
@@ -100,10 +99,10 @@ const App: React.FC = () => {
           <h1 className="text-3xl font-extrabold tracking-tight text-slate-900 bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 to-violet-600">
             JobApp Mailer
           </h1>
-          <p className="text-slate-500 font-medium text-sm sm:text-base">Direct Gmail API Edition</p>
+          <p className="text-slate-500 font-medium text-sm sm:text-base">Pro Gmail API Edition</p>
         </div>
         <div className="hidden sm:block">
-           <span className="px-3 py-1 bg-indigo-50 text-indigo-700 text-xs font-bold rounded-full border border-indigo-100">V3.0 API</span>
+           <span className="px-3 py-1 bg-indigo-50 text-indigo-700 text-xs font-bold rounded-full border border-indigo-100">V5.0 PRO</span>
         </div>
       </motion.header>
 

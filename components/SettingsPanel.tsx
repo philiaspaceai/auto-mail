@@ -137,9 +137,9 @@ const SettingsPanel: React.FC<Props> = ({ settings, onUpdate }) => {
 
           <ol className="space-y-4 text-sm text-slate-300 list-decimal ml-5 marker:text-indigo-400 marker:font-bold">
             <li>Go to <a href="https://console.cloud.google.com" target="_blank" className="text-white underline inline-flex items-center gap-1">Google Cloud Console <ExternalLink size={12}/></a>.</li>
-            <li>Enable the <strong>Gmail API</strong> in "APIs & Services".</li>
+            <li>Enable the <strong>Gmail API</strong> in "APIs &amp; Services".</li>
             <li>Configure <strong>OAuth Consent Screen</strong> (Use "External").</li>
-            <li>Under <strong>Credentials</strong>, click "Create Credentials" > "OAuth client ID".</li>
+            <li>Under <strong>Credentials</strong>, click "Create Credentials" &gt; "OAuth client ID".</li>
             <li>Application type: <strong>Web application</strong>.</li>
             <li>Authorized JavaScript origins: <strong>Add your Vercel/App URL</strong>.</li>
             <li>Copy the <strong>Client ID</strong> and paste it here.</li>

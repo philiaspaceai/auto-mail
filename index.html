@@ -1,0 +1,53 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#4f46e5">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link rel="manifest" href="manifest.json">
+    <title>JobApp Mailer | Professional Edition</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+<script type="importmap">
+{
+  "imports": {
+    "react": "https://esm.sh/react@19.0.0",
+    "react-dom": "https://esm.sh/react-dom@19.0.0",
+    "react-dom/client": "https://esm.sh/react-dom@19.0.0/client",
+    "framer-motion": "https://esm.sh/framer-motion@11.11.11?external=react,react-dom",
+    "lucide-react": "https://esm.sh/lucide-react@0.454.0?external=react",
+    "react-dom/": "https://esm.sh/react-dom@^19.2.3/",
+    "react/": "https://esm.sh/react@^19.2.3/"
+  }
+}
+</script>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+  body { 
+    font-family: 'Inter', sans-serif;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .glass-effect {
+    background: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+  }
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: #e2e8f0; border-radius: 10px; }
+  ::-webkit-scrollbar-thumb:hover { background: #cbd5e1; }
+  
+  button, select, input, textarea {
+    touch-action: manipulation;
+  }
+</style>
+<link rel="stylesheet" href="/index.css">
+</head>
+<body class="bg-[#f8fafc] text-slate-900 min-h-screen">
+    <div id="root"></div>
+<script type="module" src="/index.tsx"></script>
+</body>
+</html>

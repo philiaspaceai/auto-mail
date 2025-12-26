@@ -1,0 +1,5 @@
+{
+  "name": "JobApp Mailer",
+  "description": "A specialized tool for sending batch job applications with customized templates, PDF attachments, and Google Apps Script integration.",
+  "requestFramePermissions": []
+}

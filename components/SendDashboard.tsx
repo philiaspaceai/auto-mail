@@ -2,7 +2,7 @@
 import React, { useState, useMemo } from 'react';
 import { Template, Batch, SendStatus, Recipient, AppSettings } from '../types';
 import { motion, AnimatePresence } from 'framer-motion';
-import { CheckCircle, XCircle, Loader2, Send, ChevronRight, FileText, LayoutList, Info, ShieldAlert, Zap } from 'lucide-react';
+import { CheckCircle, XCircle, Loader2, Send, ChevronRight, FileText, LayoutList, Info, ShieldAlert } from 'lucide-react';
 
 interface Props {
   templates: Template[];
@@ -30,12 +30,17 @@ const SendDashboard: React.FC<Props> = ({ templates, batches, settings }) => {
   const totalCount = selectedBatch?.recipients.length || 0;
   const progressPercent = totalCount > 0 ? (completedCount / totalCount) * 100 : 0;
 
-  // Helper to create RFC 2822 MIME message
+  const utf8ToBase64 = (str: string) => {
+    return btoa(unescape(encodeURIComponent(str)));
+  };
+
   const createMimeMessage = (to: string, subject: string, body: string, attachments: any[]) => {
     const boundary = "job_app_boundary_" + Date.now();
+    const encodedSubject = `=?utf-8?B?${utf8ToBase64(subject)}?=`;
+
     let email = [
       `To: ${to}`,
-      `Subject: ${subject}`,
+      `Subject: ${encodedSubject}`,
       'MIME-Version: 1.0',
       `Content-Type: multipart/mixed; boundary="${boundary}"`,
       '',
@@ -59,9 +64,8 @@ const SendDashboard: React.FC<Props> = ({ templates, batches, settings }) => {
 
     email.push(`--${boundary}--`);
     
-    // Convert to base64url format for Gmail API
     const fullMessage = email.join('\r\n');
-    return btoa(unescape(encodeURIComponent(fullMessage)))
+    return utf8ToBase64(fullMessage)
       .replace(/\+/g, '-')
       .replace(/\//g, '_')
       .replace(/=+$/, '');
@@ -125,7 +129,6 @@ const SendDashboard: React.FC<Props> = ({ templates, batches, settings }) => {
         }));
       }
       
-      // Safety delay
       await new Promise(r => setTimeout(r, 1000));
     }
     
@@ -137,14 +140,16 @@ const SendDashboard: React.FC<Props> = ({ templates, batches, settings }) => {
 
   return (
     <div className="space-y-6">
-      <div className="flex justify-between items-start">
-        <div>
+      <div className="flex justify-between items-start gap-4">
+        <div className="min-w-0 flex-1">
           <h2 className="text-2xl font-bold text-slate-800">Dispatch Hub</h2>
           <p className="text-sm text-slate-500">Official Gmail API Terminal</p>
         </div>
         {!isTokenValid && (
-          <div className="bg-rose-100 text-rose-700 px-4 py-2 rounded-full text-[10px] font-bold flex items-center gap-2 border border-rose-200">
-            <ShieldAlert size={14} /> Authorization Required
+          <div className="bg-rose-50 text-rose-600 px-2 py-1.5 sm:px-4 sm:py-2 rounded-full text-[9px] sm:text-[10px] font-black uppercase tracking-tighter sm:tracking-normal flex items-center gap-1.5 border border-rose-100 shrink-0 mt-1 sm:mt-0">
+            <ShieldAlert size={12} className="sm:w-3.5 sm:h-3.5 shrink-0" />
+            <span className="hidden xs:inline">Authorization Required</span>
+            <span className="xs:hidden">Auth Required</span>
           </div>
         )}
       </div>
@@ -164,7 +169,7 @@ const SendDashboard: React.FC<Props> = ({ templates, batches, settings }) => {
                <option value="">-- Choose Template --</option>
                {templates.map(t => <option key={t.id} value={t.id}>{t.name}</option>)}
              </select>
-             <ChevronRight className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-300 pointer-events-none rotate-90" />
+             <ChevronRight className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-300 pointer-events-none rotate-90 shrink-0" />
           </div>
         </div>
         <div className="space-y-2">
@@ -181,7 +186,7 @@ const SendDashboard: React.FC<Props> = ({ templates, batches, settings }) => {
               <option value="">-- Choose Batch --</option>
               {batches.map(b => <option key={b.id} value={b.id}>{b.name} ({b.recipients.length})</option>)}
             </select>
-            <ChevronRight className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-300 pointer-events-none rotate-90" />
+            <ChevronRight className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-300 pointer-events-none rotate-90 shrink-0" />
           </div>
         </div>
       </div>
@@ -211,15 +216,15 @@ const SendDashboard: React.FC<Props> = ({ templates, batches, settings }) => {
             {selectedBatch?.recipients.map((r, i) => {
               const s = sendingStatus[r.id];
               return (
-                <div key={r.id} className="p-4 flex items-center justify-between">
-                  <div className="flex items-center gap-3">
-                    <div className="w-6 h-6 rounded-full bg-slate-50 flex items-center justify-center text-[10px] font-bold text-slate-400 border border-slate-100">{i+1}</div>
-                    <div>
-                      <div className="text-sm font-bold text-slate-700">{r.company}</div>
-                      <div className="text-[10px] text-slate-400">{r.email}</div>
+                <div key={r.id} className="p-4 flex items-center justify-between overflow-hidden">
+                  <div className="flex items-center gap-3 min-w-0 flex-1">
+                    <div className="w-6 h-6 rounded-full bg-slate-50 flex items-center justify-center text-[10px] font-bold text-slate-400 border border-slate-100 shrink-0">{i+1}</div>
+                    <div className="min-w-0 flex-1">
+                      <div className="text-sm font-bold text-slate-700 truncate">{r.company}</div>
+                      <div className="text-[10px] text-slate-400 truncate">{r.email}</div>
                     </div>
                   </div>
-                  <div className="flex items-center gap-3">
+                  <div className="flex items-center gap-3 shrink-0 ml-4">
                     {s?.status === 'sending' && <Loader2 size={14} className="animate-spin text-indigo-500" />}
                     {s?.status === 'success' && <div className="text-emerald-500 bg-emerald-50 px-3 py-1 rounded-full text-[10px] font-bold uppercase border border-emerald-100">Sent</div>}
                     {s?.status === 'error' && (
@@ -246,9 +251,9 @@ const SendDashboard: React.FC<Props> = ({ templates, batches, settings }) => {
       >
         <span className="relative z-10 flex items-center justify-center gap-3">
            {isSending ? (
-             <>Sending via API... <Loader2 className="animate-spin" /></>
+             <>Sending via API... <Loader2 className="animate-spin shrink-0" /></>
            ) : (
-             <>Launch Applications <Send size={22} /></>
+             <>Launch Applications <Send size={22} className="shrink-0" /></>
            )}
         </span>
       </motion.button>

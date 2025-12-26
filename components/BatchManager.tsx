@@ -3,7 +3,8 @@ import React, { useState } from 'react';
 import { Batch, Recipient } from '../types';
 import { storage } from '../services/storageService';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Plus, Trash2, Users, Building, Mail, X, Layers, Search, Edit3 } from 'lucide-react';
+import { Plus, Trash2, Users, Building, Mail, X, Layers, Edit3 } from 'lucide-react';
+import DeleteModal from './DeleteModal';
 
 interface Props {
   batches: Batch[];
@@ -12,6 +13,7 @@ interface Props {
 
 const BatchManager: React.FC<Props> = ({ batches, onUpdate }) => {
   const [editingBatch, setEditingBatch] = useState<Partial<Batch> | null>(null);
+  const [templateToDelete, setTemplateToDelete] = useState<Batch | null>(null);
   const [newRecipient, setNewRecipient] = useState({ company: '', email: '' });
 
   const startNew = () => {
@@ -48,9 +50,10 @@ const BatchManager: React.FC<Props> = ({ batches, onUpdate }) => {
     onUpdate();
   };
 
-  const removeBatch = async (id: string) => {
-    if (confirm('Delete this batch?')) {
-      await storage.deleteBatch(id);
+  const confirmDelete = async () => {
+    if (templateToDelete) {
+      await storage.deleteBatch(templateToDelete.id);
+      setTemplateToDelete(null);
       onUpdate();
     }
   };
@@ -80,9 +83,10 @@ const BatchManager: React.FC<Props> = ({ batches, onUpdate }) => {
           <motion.div 
             initial={{ opacity: 0, scale: 0.98 }}
             animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.98 }}
             className="space-y-5"
           >
-            <div className="bg-slate-50 p-4 sm:p-6 rounded-[2rem] border border-slate-200 shadow-inner">
+            <div className="bg-slate-50 p-6 rounded-[2rem] border border-slate-200 shadow-inner">
                <label className="text-[10px] font-bold uppercase text-slate-400 ml-1">Batch Label</label>
                <input 
                  type="text" 
@@ -133,20 +137,20 @@ const BatchManager: React.FC<Props> = ({ batches, onUpdate }) => {
                     initial={{ opacity: 0, x: -10 }}
                     animate={{ opacity: 1, x: 0 }}
                     exit={{ opacity: 0, x: 10 }}
-                    className="group bg-white border border-slate-100 p-4 rounded-2xl flex justify-between items-center shadow-sm hover:border-indigo-100 transition-all"
+                    className="group bg-white border border-slate-100 p-4 rounded-2xl flex justify-between items-center shadow-sm hover:border-indigo-100 transition-all overflow-hidden"
                   >
-                    <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 bg-slate-100 rounded-full flex items-center justify-center text-slate-400 font-bold text-xs">
+                    <div className="flex items-center gap-3 min-w-0 flex-1">
+                      <div className="w-8 h-8 bg-slate-100 rounded-full flex items-center justify-center text-slate-400 font-bold text-xs shrink-0">
                         {idx + 1}
                       </div>
-                      <div>
-                        <div className="font-bold text-slate-800 text-sm">{r.company}</div>
-                        <div className="text-xs text-slate-400">{r.email}</div>
+                      <div className="min-w-0 flex-1">
+                        <div className="font-bold text-slate-800 text-sm truncate">{r.company}</div>
+                        <div className="text-xs text-slate-400 truncate">{r.email}</div>
                       </div>
                     </div>
                     <button 
                       onClick={() => removeRecipient(r.id)}
-                      className="p-2 text-slate-300 hover:text-rose-500 hover:bg-rose-50 rounded-lg transition-colors"
+                      className="p-2 text-slate-300 hover:text-rose-500 hover:bg-rose-50 rounded-lg transition-colors shrink-0"
                     >
                       <X size={18} />
                     </button>
@@ -187,27 +191,27 @@ const BatchManager: React.FC<Props> = ({ batches, onUpdate }) => {
                   key={b.id}
                   layoutId={b.id}
                   whileHover={{ y: -4 }}
-                  className="bg-white p-5 rounded-3xl border border-slate-100 hover:border-indigo-100 hover:shadow-xl transition-all flex flex-col justify-between"
+                  className="bg-white p-5 rounded-3xl border border-slate-100 hover:border-indigo-100 hover:shadow-xl transition-all flex flex-col justify-between overflow-hidden"
                 >
-                  <div>
-                    <div className="flex justify-between items-start mb-2">
-                       <h3 className="font-bold text-slate-800 text-lg leading-tight">{b.name}</h3>
-                       <div className="flex gap-1">
-                          <button onClick={() => setEditingBatch(b)} className="p-1.5 text-slate-400 hover:text-indigo-600 transition-colors"><Edit3 size={14}/></button>
-                          <button onClick={() => removeBatch(b.id)} className="p-1.5 text-slate-400 hover:text-rose-600 transition-colors"><Trash2 size={14}/></button>
+                  <div className="min-w-0 flex-1">
+                    <div className="flex justify-between items-start mb-2 min-w-0">
+                       <h3 className="font-bold text-slate-800 text-lg leading-tight truncate pr-2 flex-1">{b.name}</h3>
+                       <div className="flex gap-1 shrink-0">
+                          <button onClick={() => setEditingBatch(b)} className="p-1.5 text-slate-300 hover:text-indigo-600 transition-colors"><Edit3 size={16}/></button>
+                          <button onClick={() => setTemplateToDelete(b)} className="p-1.5 text-slate-300 hover:text-rose-600 transition-colors"><Trash2 size={16}/></button>
                        </div>
                     </div>
-                    <div className="flex items-center gap-1.5 text-slate-400">
-                      <Users size={14} />
+                    <div className="flex items-center gap-1.5 text-slate-400 min-w-0">
+                      <Users size={14} className="shrink-0" />
                       <span className="text-xs font-semibold">{b.recipients.length} Companies</span>
                     </div>
                   </div>
                   
-                  <div className="mt-6 flex flex-wrap gap-1">
+                  <div className="mt-6 flex flex-wrap gap-1 min-w-0">
                      {b.recipients.slice(0, 3).map((r) => (
-                       <span key={r.id} className="text-[10px] bg-slate-50 text-slate-500 px-2 py-0.5 rounded-full border border-slate-100">{r.company}</span>
+                       <span key={r.id} className="text-[10px] bg-slate-50 text-slate-500 px-2 py-0.5 rounded-full border border-slate-100 max-w-[120px] truncate">{r.company}</span>
                      ))}
-                     {b.recipients.length > 3 && <span className="text-[10px] text-slate-300 self-center">+{b.recipients.length - 3} more</span>}
+                     {b.recipients.length > 3 && <span className="text-[10px] text-slate-300 self-center shrink-0">+{b.recipients.length - 3} more</span>}
                   </div>
                 </motion.div>
               ))
@@ -215,6 +219,14 @@ const BatchManager: React.FC<Props> = ({ batches, onUpdate }) => {
           </div>
         )}
       </AnimatePresence>
+
+      <DeleteModal 
+        isOpen={!!templateToDelete}
+        onClose={() => setTemplateToDelete(null)}
+        onConfirm={confirmDelete}
+        title="Delete Batch?"
+        itemName={templateToDelete?.name || ''}
+      />
     </div>
   );
 };

@@ -11,7 +11,8 @@ import {
   Globe, 
   Settings2,
   AlertCircle,
-  UserPlus
+  UserPlus,
+  Rocket
 } from 'lucide-react';
 
 interface Props {
@@ -218,6 +219,19 @@ const SettingsPanel: React.FC<Props> = ({ settings, onUpdate }) => {
               </div>
               <p className="mt-2 text-[10px] text-indigo-400 font-bold uppercase tracking-wider flex items-center gap-1">
                 <AlertCircle size={12} /> This step is mandatory for testing!
+              </p>
+            </div>
+          </div>
+
+          {/* Step 6 */}
+          <div className="relative flex gap-6">
+            <div className="mt-1 flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-slate-900 text-white font-bold text-sm">6</div>
+            <div className="flex-1">
+              <h4 className="font-bold text-slate-900 text-sm sm:text-base flex items-center gap-2">
+                Apply & Authorize <Rocket size={16} className="text-amber-500" />
+              </h4>
+              <p className="mt-1 text-xs sm:text-sm text-slate-500 leading-relaxed">
+                Copy the <strong>Client ID</strong> you just created, then paste it into the <strong>Google OAuth Client ID</strong> field at the top of this page. Click the <strong>Save ID</strong> button, followed by <strong>Authorize via Google</strong> to begin your application process!
               </p>
             </div>
           </div>
